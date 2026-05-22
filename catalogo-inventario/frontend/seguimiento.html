@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Seguimiento de envíos</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="logo-area">
+      <div class="logo-box">📦</div>
+      <div><div class="logo-name">Catálogo</div><div class="logo-sub">Sistema de inventario</div></div>
+    </div>
+    <div class="nav-section">Principal</div>
+    <a href="index.html" class="nav-item"><span class="nav-icon">🏠</span>Dashboard</a>
+    <a href="productos.html" class="nav-item"><span class="nav-icon">🛍️</span>Productos</a>
+    <a href="categorias.html" class="nav-item"><span class="nav-icon">🏷️</span>Categorías</a>
+    <a href="inventario.html" class="nav-item"><span class="nav-icon">📊</span>Inventario</a>
+    <div class="nav-section">Sprint 2</div>
+    <a href="pedidos.html" class="nav-item"><span class="nav-icon">🛒</span>Pedidos</a>
+    <a href="guias.html" class="nav-item"><span class="nav-icon">🚚</span>Guías de envío</a>
+    <div class="nav-section">Sprint 3</div>
+    <a href="seguimiento.html" class="nav-item active"><span class="nav-icon">📍</span>Seguimiento</a>
+    <a href="tracking.html" class="nav-item"><span class="nav-icon">🔍</span>Tracking público</a>
+    <div class="nav-section">Sprint 4</div>
+<a href="auditoria.html" class="nav-item"><span class="nav-icon">📋</span>Auditoría</a>
+    
+  </aside>
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <span class="topbar-title">Seguimiento de envíos</span>
+        <span class="topbar-sub">Cambia el estado de las guías de envío</span>
+      </div>
+    </div>
+    <div class="content">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Guías de envío</div>
+            <div class="card-subtitle" id="count-label">Cargando...</div>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Número guía</th>
+                <th>Destinatario</th>
+                <th>Estado actual</th>
+                <th>Siguiente estado</th>
+                <th>Historial</th>
+              </tr>
+            </thead>
+            <tbody id="tabla"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="modal-historial" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;align-items:center;justify-content:center">
+  <div style="background:#fff;border-radius:16px;padding:24px;width:520px;max-width:90vw;max-height:80vh;overflow-y:auto">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <span style="font-size:15px;font-weight:700">Historial de estados</span>
+      <button class="ab ab-del" onclick="cerrarModal()">✕ Cerrar</button>
+    </div>
+    <div id="historial-content"></div>
+  </div>
+</div>
+
+<script type="module" src="js/seguimiento.js"></script>
+</body>
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Productos</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="logo-area">
+      <div class="logo-box">📦</div>
+      <div><div class="logo-name">Catálogo</div><div class="logo-sub">Sistema de inventario</div></div>
+    </div>
+    <div class="nav-section">Principal</div>
+    <a href="index.html" class="nav-item"><span class="nav-icon">🏠</span>Dashboard</a>
+    <a href="productos.html" class="nav-item active"><span class="nav-icon">🛍️</span>Productos</a>
+    <a href="categorias.html" class="nav-item"><span class="nav-icon">🏷️</span>Categorías</a>
+    <a href="inventario.html" class="nav-item"><span class="nav-icon">📊</span>Inventario</a>
+    <div class="nav-section">Sprint 2</div>
+    <a href="pedidos.html" class="nav-item"><span class="nav-icon">🛒</span>Pedidos</a>
+    <a href="guias.html" class="nav-item"><span class="nav-icon">🚚</span>Guías de envío</a>
+    <div class="nav-section">Sprint 3</div>
+<a href="seguimiento.html" class="nav-item"><span class="nav-icon">📍</span>Seguimiento</a>
+<a href="tracking.html" class="nav-item"><span class="nav-icon">🔍</span>Tracking público</a>
+<div class="nav-section">Sprint 4</div>
+<a href="auditoria.html" class="nav-item"><span class="nav-icon">📋</span>Auditoría</a>
+  </aside>
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <span class="topbar-title">Productos</span>
+        <span class="topbar-sub">Gestiona el catálogo de productos</span>
+      </div>
+      <div class="topbar-right">
+  <input class="search-input" id="buscar" placeholder="🔍 Buscar producto..." oninput="filtrar()">
+  <button class="btn btn-secondary" onclick="toggleFiltros()">⚙️ Filtros</button>
+</div>
+    </div>
+    <div id="panel-filtros" style="display:none;background:#fff;border-bottom:1px solid #e5e7eb;padding:16px 28px">
+  <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
+    <div class="form-group">
+      <label class="form-label">Categoría</label>
+      <select class="form-input" id="filtroCat" onchange="filtrar()" style="width:180px">
+        <option value="">Todas</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Estado</label>
+      <select class="form-input" id="filtroEstado" onchange="filtrar()" style="width:140px">
+        <option value="">Todos</option>
+        <option value="true">Activo</option>
+        <option value="false">Inactivo</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Precio mínimo</label>
+      <input class="form-input" id="precioMin" type="number" min="0" placeholder="0" oninput="filtrar()" style="width:130px">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Precio máximo</label>
+      <input class="form-input" id="precioMax" type="number" min="0" placeholder="Sin límite" oninput="filtrar()" style="width:130px">
+    </div>
+    <button class="btn btn-secondary btn-sm" onclick="limpiarFiltros()">✕ Limpiar filtros</button>
+  </div>
+</div>
+    <div class="content">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title" id="form-title">Nuevo producto</div>
+            <div class="card-subtitle">Completa los campos obligatorios</div>
+          </div>
+        </div>
+        <div class="form-body">
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">Nombre *</label>
+              <input class="form-input" id="nombre" placeholder="Nombre del producto">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Precio *</label>
+              <input class="form-input" id="precio" type="number" placeholder="0">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Descripción</label>
+              <input class="form-input" id="descripcion" placeholder="Descripción opcional">
+            </div>
+            <div class="form-group">
+              <label class="form-label">URL imagen</label>
+              <input class="form-input" id="imagen_url" placeholder="https://...">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Categoría</label>
+              <select class="form-input" id="categoria">
+                <option value="">Sin categoría</option>
+              </select>
+            </div>
+          </div>
+          <input type="hidden" id="editId">
+          <div class="form-actions">
+            <button class="btn btn-secondary" onclick="limpiar()">Cancelar</button>
+            <button class="btn btn-primary" onclick="guardar()">💾 Guardar producto</button>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Lista de productos</div>
+            <div class="card-subtitle" id="count-label">Cargando...</div>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Nombre</th><th>Precio</th><th>Categoría</th><th>Estado</th><th>Acciones</th></tr></thead>
+            <tbody id="tabla"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="module" src="js/productos.js"></script>
+<script>
+function toggleFiltros() {
+  const panel = document.getElementById("panel-filtros")
+  panel.style.display = panel.style.display === "none" ? "block" : "none"
+}
+</script>
+</body>
+</html>

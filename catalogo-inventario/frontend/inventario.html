@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Inventario</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="logo-area">
+      <div class="logo-box">📦</div>
+      <div><div class="logo-name">Catálogo</div><div class="logo-sub">Sistema de inventario</div></div>
+    </div>
+    <div class="nav-section">Principal</div>
+    <a href="index.html" class="nav-item"><span class="nav-icon">🏠</span>Dashboard</a>
+    <a href="productos.html" class="nav-item"><span class="nav-icon">🛍️</span>Productos</a>
+    <a href="categorias.html" class="nav-item"><span class="nav-icon">🏷️</span>Categorías</a>
+    <a href="inventario.html" class="nav-item active"><span class="nav-icon">📊</span>Inventario</a>
+    <div class="nav-section">Sprint 2</div>
+    <a href="pedidos.html" class="nav-item"><span class="nav-icon">🛒</span>Pedidos</a>
+    <a href="guias.html" class="nav-item"><span class="nav-icon">🚚</span>Guías de envío</a>
+    <div class="nav-section">Sprint 3</div>
+<a href="seguimiento.html" class="nav-item"><span class="nav-icon">📍</span>Seguimiento</a>
+<a href="tracking.html" class="nav-item"><span class="nav-icon">🔍</span>Tracking público</a>
+<div class="nav-section">Sprint 4</div>
+<a href="auditoria.html" class="nav-item"><span class="nav-icon">📋</span>Auditoría</a>
+  </aside>
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <span class="topbar-title">Inventario</span>
+        <span class="topbar-sub">Control de stock por producto</span>
+      </div>
+      <div class="topbar-right">
+        <button class="btn btn-secondary" onclick="cargar(true)">⚠️ Solo alertas</button>
+        <button class="btn btn-primary" onclick="cargar(false)">📊 Ver todo</button>
+      </div>
+    </div>
+    <div class="content">
+      <div id="banner-alertas"></div>
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Stock de productos</div>
+            <div class="card-subtitle" id="count-label">Cargando...</div>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Producto</th><th>Stock actual</th><th>Stock mínimo</th><th>Estado</th><th>Acciones</th></tr></thead>
+            <tbody id="tabla"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="module" src="js/inventario.js"></script>
+</body>
+</html>

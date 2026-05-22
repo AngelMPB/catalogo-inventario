@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Guías de envío</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="logo-area">
+      <div class="logo-box">📦</div>
+      <div><div class="logo-name">Catálogo</div><div class="logo-sub">Sistema de inventario</div></div>
+    </div>
+    <div class="nav-section">Principal</div>
+    <a href="index.html" class="nav-item"><span class="nav-icon">🏠</span>Dashboard</a>
+    <a href="productos.html" class="nav-item"><span class="nav-icon">🛍️</span>Productos</a>
+    <a href="categorias.html" class="nav-item"><span class="nav-icon">🏷️</span>Categorías</a>
+    <a href="inventario.html" class="nav-item"><span class="nav-icon">📊</span>Inventario</a>
+    <div class="nav-section">Sprint 2</div>
+    <a href="pedidos.html" class="nav-item"><span class="nav-icon">🛒</span>Pedidos</a>
+    <a href="guias.html" class="nav-item active"><span class="nav-icon">🚚</span>Guías de envío</a>
+    <div class="nav-section">Sprint 3</div>
+<a href="seguimiento.html" class="nav-item"><span class="nav-icon">📍</span>Seguimiento</a>
+<a href="tracking.html" class="nav-item"><span class="nav-icon">🔍</span>Tracking público</a>
+<div class="nav-section">Sprint 4</div>
+<a href="auditoria.html" class="nav-item"><span class="nav-icon">📋</span>Auditoría</a>
+  </aside>
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <span class="topbar-title">Guías de envío</span>
+        <span class="topbar-sub">Genera y consulta guías de despacho</span>
+      </div>
+    </div>
+    <div class="content">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Generar nueva guía</div>
+            <div class="card-subtitle">Asocia un pedido y completa los datos del destinatario</div>
+          </div>
+        </div>
+        <div class="form-body">
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">Pedido *</label>
+              <select class="form-input" id="pedido_id">
+                <option value="">Seleccionar pedido...</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Nombre destinatario *</label>
+              <input class="form-input" id="nombre_destinatario" placeholder="Nombre completo">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Dirección *</label>
+              <input class="form-input" id="direccion" placeholder="Dirección de entrega">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Teléfono</label>
+              <input class="form-input" id="telefono" placeholder="Ej: 3001234567">
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-primary" onclick="crearGuia()">🚚 Generar guía</button>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Guías generadas</div>
+            <div class="card-subtitle" id="count-label">Cargando...</div>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Número guía</th><th>Pedido</th><th>Destinatario</th><th>Dirección</th><th>Teléfono</th><th>Fecha</th></tr></thead>
+            <tbody id="tabla"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="module" src="js/guias.js"></script>
+</body>
+</html>

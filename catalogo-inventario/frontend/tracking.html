@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Rastrear envío</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .tracking-wrap { max-width: 600px; margin: 60px auto; padding: 0 20px; }
+    .tracking-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 16px; padding: 32px; box-shadow: 0 4px 6px rgba(0,0,0,.05); }
+    .tracking-logo { text-align: center; margin-bottom: 24px; }
+    .tracking-logo-icon { font-size: 40px; }
+    .tracking-logo-text { font-size: 20px; font-weight: 700; color: #111; margin-top: 8px; }
+    .tracking-logo-sub { font-size: 13px; color: #9ca3af; }
+    .search-bar { display: flex; gap: 10px; margin-bottom: 24px; }
+    .search-bar input { flex: 1; }
+    .result-card { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; padding: 20px; margin-bottom: 16px; }
+    .result-title { font-size: 13px; color: #9ca3af; margin-bottom: 4px; }
+    .result-value { font-size: 15px; font-weight: 600; color: #111; }
+    .timeline { margin-top: 20px; }
+    .timeline-item { display: flex; gap: 14px; margin-bottom: 16px; }
+    .timeline-dot { width: 12px; height: 12px; border-radius: 50%; background: #16a34a; flex-shrink: 0; margin-top: 4px; }
+    .timeline-dot.pending { background: #d1d5db; }
+    .timeline-line { width: 2px; background: #e5e7eb; margin: 4px 0 0 5px; }
+    .timeline-info { flex: 1; }
+    .timeline-estado { font-size: 13px; font-weight: 600; color: #111; }
+    .timeline-fecha { font-size: 12px; color: #9ca3af; margin-top: 2px; }
+    .timeline-comentario { font-size: 12px; color: #6b7280; margin-top: 2px; font-style: italic; }
+  </style>
+</head>
+<body style="background:#f3f4f6;min-height:100vh">
+  <div class="tracking-wrap">
+    <div class="tracking-card">
+      <div class="tracking-logo">
+        <div class="tracking-logo-icon">📦</div>
+        <div class="tracking-logo-text">Rastrear envío</div>
+        <div class="tracking-logo-sub">Ingresa tu número de guía para consultar el estado</div>
+      </div>
+      <div class="search-bar">
+        <input class="form-input" id="numero_guia" placeholder="Ej: GUIA-1234567890" onkeydown="if(event.key==='Enter') buscar()">
+        <button class="btn btn-primary" onclick="buscar()">🔍 Buscar</button>
+      </div>
+      <div id="resultado"></div>
+    </div>
+    <div style="text-align:center;margin-top:16px">
+      <a href="index.html" style="font-size:13px;color:#9ca3af;text-decoration:none">← Volver al sistema</a>
+    </div>
+  </div>
+<script type="module" src="js/tracking.js"></script>
+</body>
+</html>

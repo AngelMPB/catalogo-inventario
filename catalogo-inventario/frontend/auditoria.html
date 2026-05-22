@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Auditoría</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="logo-area">
+      <div class="logo-box">📦</div>
+      <div><div class="logo-name">Catálogo</div><div class="logo-sub">Sistema de inventario</div></div>
+    </div>
+    <div class="nav-section">Principal</div>
+    <a href="index.html" class="nav-item"><span class="nav-icon">🏠</span>Dashboard</a>
+    <a href="productos.html" class="nav-item"><span class="nav-icon">🛍️</span>Productos</a>
+    <a href="categorias.html" class="nav-item"><span class="nav-icon">🏷️</span>Categorías</a>
+    <a href="inventario.html" class="nav-item"><span class="nav-icon">📊</span>Inventario</a>
+    <div class="nav-section">Sprint 2</div>
+    <a href="pedidos.html" class="nav-item"><span class="nav-icon">🛒</span>Pedidos</a>
+    <a href="guias.html" class="nav-item"><span class="nav-icon">🚚</span>Guías de envío</a>
+    <div class="nav-section">Sprint 3</div>
+    <a href="seguimiento.html" class="nav-item"><span class="nav-icon">📍</span>Seguimiento</a>
+    <a href="tracking.html" class="nav-item"><span class="nav-icon">🔍</span>Tracking público</a>
+    <div class="nav-section">Sprint 4</div>
+    <a href="auditoria.html" class="nav-item active"><span class="nav-icon">📋</span>Auditoría</a>
+  </aside>
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <span class="topbar-title">Auditoría del sistema</span>
+        <span class="topbar-sub">Historial de eventos y notificaciones</span>
+      </div>
+      <div class="topbar-right">
+        <select class="search-input" id="filtroModulo" onchange="filtrar()" style="width:160px">
+          <option value="">Todos los módulos</option>
+          <option value="inventario">Inventario</option>
+          <option value="guias_envio">Guías de envío</option>
+          <option value="productos">Productos</option>
+        </select>
+        <select class="search-input" id="filtroSeveridad" onchange="filtrar()" style="width:140px">
+          <option value="">Toda severidad</option>
+          <option value="info">Info</option>
+          <option value="warning">Warning</option>
+          <option value="error">Error</option>
+        </select>
+      </div>
+    </div>
+    <div class="content">
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-icon">📋</div>
+          <div class="stat-label">Total eventos</div>
+          <div class="stat-value" id="s-total">—</div>
+        </div>
+        <div class="stat">
+          <div class="stat-icon">📦</div>
+          <div class="stat-label">Ajustes inventario</div>
+          <div class="stat-value" id="s-inventario">—</div>
+        </div>
+        <div class="stat">
+          <div class="stat-icon">🚚</div>
+          <div class="stat-label">Cambios de estado</div>
+          <div class="stat-value" id="s-estados">—</div>
+        </div>
+        <div class="stat">
+          <div class="stat-icon">✉️</div>
+          <div class="stat-label">Notificaciones</div>
+          <div class="stat-value" id="s-notif">—</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Historial de eventos</div>
+            <div class="card-subtitle" id="count-label">Cargando...</div>
+          </div>
+          <button class="btn btn-secondary" onclick="cargar()">🔄 Actualizar</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Módulo</th>
+                <th>Acción</th>
+                <th>Detalle</th>
+                <th>Usuario</th>
+                <th>Severidad</th>
+              </tr>
+            </thead>
+            <tbody id="tabla-eventos"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Logs de notificaciones</div>
+            <div class="card-subtitle" id="count-notif">Cargando...</div>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Guía</th>
+                <th>Destinatario</th>
+                <th>Tipo</th>
+                <th>Estado entrega</th>
+              </tr>
+            </thead>
+            <tbody id="tabla-notif"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="module" src="js/auditoria.js"></script>
+</body>
+</html>

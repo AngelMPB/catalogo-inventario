@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Categorías</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="logo-area">
+      <div class="logo-box">📦</div>
+      <div><div class="logo-name">Catálogo</div><div class="logo-sub">Sistema de inventario</div></div>
+    </div>
+    <div class="nav-section">Principal</div>
+    <a href="index.html" class="nav-item"><span class="nav-icon">🏠</span>Dashboard</a>
+    <a href="productos.html" class="nav-item"><span class="nav-icon">🛍️</span>Productos</a>
+    <a href="categorias.html" class="nav-item active"><span class="nav-icon">🏷️</span>Categorías</a>
+    <a href="inventario.html" class="nav-item"><span class="nav-icon">📊</span>Inventario</a>
+    <div class="nav-section">Sprint 2</div>
+    <a href="pedidos.html" class="nav-item"><span class="nav-icon">🛒</span>Pedidos</a>
+    <a href="guias.html" class="nav-item"><span class="nav-icon">🚚</span>Guías de envío</a>
+    <div class="nav-section">Sprint 3</div>
+<a href="seguimiento.html" class="nav-item"><span class="nav-icon">📍</span>Seguimiento</a>
+<a href="tracking.html" class="nav-item"><span class="nav-icon">🔍</span>Tracking público</a>
+<div class="nav-section">Sprint 4</div>
+<a href="auditoria.html" class="nav-item"><span class="nav-icon">📋</span>Auditoría</a>
+  </aside>
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <span class="topbar-title">Categorías</span>
+        <span class="topbar-sub">Gestiona las categorías de productos</span>
+      </div>
+      <div class="topbar-right">
+        <input class="search-input" id="buscar" placeholder="🔍 Buscar categoría..." oninput="filtrar()">
+      </div>
+    </div>
+    <div class="content">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title" id="form-title">Nueva categoría</div>
+            <div class="card-subtitle">Completa los campos y guarda</div>
+          </div>
+        </div>
+        <div class="form-body">
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">Nombre *</label>
+              <input class="form-input" id="nombre" placeholder="Ej: Electrónica">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Descripción</label>
+              <input class="form-input" id="descripcion" placeholder="Descripción opcional">
+            </div>
+          </div>
+          <input type="hidden" id="editId">
+          <div class="form-actions">
+            <button class="btn btn-secondary" onclick="limpiar()">Cancelar</button>
+            <button class="btn btn-primary" onclick="guardar()">💾 Guardar categoría</button>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Lista de categorías</div>
+            <div class="card-subtitle" id="count-label">Cargando...</div>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>ID</th><th>Nombre</th><th>Descripción</th><th>Acciones</th></tr></thead>
+            <tbody id="tabla"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="module" src="js/categorias.js"></script>
+</body>
+</html>
