@@ -1,21 +1,19 @@
 import express from 'express'
 import {
   obtenerProductos,
-  obtenerProductoPorId,
   obtenerTodosProductos,
   crearProducto,
-  editarProducto,
+  actualizarProducto,
   toggleHabilitado,
   eliminarProducto
 } from '../controllers/productosController.js'
 
 const router = express.Router()
 
-router.get('/todos', obtenerTodosProductos)  // ← esta debe ir ANTES de /:id
+router.get('/todos', obtenerTodosProductos)
 router.get('/', obtenerProductos)
-router.get('/:id', obtenerProductoPorId)
 router.post('/', crearProducto)
-router.put('/:id', editarProducto)
+router.put('/:id', actualizarProducto)
 router.patch('/:id/toggle', toggleHabilitado)
 router.delete('/:id', eliminarProducto)
 

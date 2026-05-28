@@ -1,80 +1,72 @@
-import supabase from '../config/supabaseClient.js'
+import pool from '../config/dbClient.js'
 
 export const obtenerPedidos = async (req, res) => {
-  const { data, error } = await supabase
-    .from('pedidos')
-    .select('*')
-    .order('created_at', { ascending: false })
-
-  if (error) return res.status(400).json(error)
-  res.json(data)
+  const { rows } = await pool.query(`
+    SELECT * FROM catalog.pedidos ORDER BY created_at DESC
+  `).catch(() => ({ rows: null }))
+  if (!rows) return res.status(400).json({ mensaje: 'Error al obtener pedidos' })
+  res.json(rows)
 }
 
 export const obtenerPedidoPorId = async (req, res) => {
-  const { data, error } = await supabase
-    .from('pedidos')
-    .select('*, detalle_pedido(*, productos(nombre, precio))')
-    .eq('id', req.params.id)
-    .single()
+  const { rows: pedidos } = await pool.query(`
+    SELECT * FROM catalog.pedidos WHERE id=$1
+  `, [req.params.id]).catch(() => ({ rows: null }))
 
-  if (error) return res.status(404).json({ mensaje: 'Pedido no encontrado' })
-  res.json(data)
+  if (!pedidos || !pedidos[0]) return res.status(404).json({ mensaje: 'Pedido no encontrado' })
+
+  const { rows: detalle } = await pool.query(`
+    SELECT d.*, json_build_object('nombre', p.nombre, 'precio', p.precio) as productos
+    FROM catalog.detalle_pedido d
+    JOIN catalog.productos p ON d.producto_id = p.id
+    WHERE d.pedido_id=$1
+  `, [req.params.id]).catch(() => ({ rows: [] }))
+
+  res.json({ ...pedidos[0], detalle_pedido: detalle })
 }
 
 export const crearPedido = async (req, res) => {
-  const { nombre_cliente, notas, total, items } = req.body
+  const { nombre_cliente, correo_cliente, notas, total, items } = req.body
 
   if (!nombre_cliente) return res.status(400).json({ mensaje: 'El nombre del cliente es obligatorio' })
   if (!items || !items.length) return res.status(400).json({ mensaje: 'El pedido debe tener al menos un producto' })
 
   // Verificar stock de cada producto
   for (const item of items) {
-    const { data: inv } = await supabase
-      .from('inventario')
-      .select('stock_actual')
-      .eq('producto_id', item.producto_id)
-      .single()
+    const { rows: inv } = await pool.query(`
+      SELECT stock_actual FROM catalog.inventario WHERE producto_id=$1
+    `, [item.producto_id]).catch(() => ({ rows: null }))
 
-    if (!inv || inv.stock_actual < item.cantidad) {
+    if (!inv || !inv[0] || inv[0].stock_actual < item.cantidad) {
       return res.status(400).json({ mensaje: `Stock insuficiente para el producto ID ${item.producto_id}` })
     }
   }
 
-  const numero_pedido = "PED-" + Date.now()
+  const numero_pedido = 'PED-' + Date.now()
 
-  const { data: pedido, error } = await supabase
-    .from('pedidos')
-    .insert([{ numero_pedido, nombre_cliente, notas, total }])
-    .select()
+  const { rows: pedido } = await pool.query(`
+    INSERT INTO catalog.pedidos (numero_pedido, nombre_cliente, correo_cliente, notas, total)
+    VALUES ($1, $2, $3, $4, $5) RETURNING *
+  `, [numero_pedido, nombre_cliente, correo_cliente || null, notas, total]).catch(() => ({ rows: null }))
 
-  if (error) return res.status(400).json(error)
+  if (!pedido) return res.status(400).json({ mensaje: 'Error al crear pedido' })
 
-  // Insertar detalle
-  const detalles = items.map(i => ({
-    pedido_id: pedido[0].id,
-    producto_id: parseInt(i.producto_id),
-    cantidad: i.cantidad,
-    precio_unitario: i.precio_unitario || 0
-  }))
-
-  const { error: errorDetalle } = await supabase
-    .from('detalle_pedido')
-    .insert(detalles)
-
-  if (errorDetalle) return res.status(400).json(errorDetalle)
-
-  // Descontar stock
+  // Insertar detalle y descontar stock
   for (const item of items) {
-    const { data: inv } = await supabase
-      .from('inventario')
-      .select('stock_actual')
-      .eq('producto_id', item.producto_id)
-      .single()
+    await pool.query(`
+      INSERT INTO catalog.detalle_pedido (pedido_id, producto_id, cantidad, precio_unitario)
+      VALUES ($1, $2, $3, $4)
+    `, [pedido[0].id, parseInt(item.producto_id), item.cantidad, item.precio_unitario || 0]).catch(() => {})
 
-    await supabase
-      .from('inventario')
-      .update({ stock_actual: inv.stock_actual - item.cantidad })
-      .eq('producto_id', item.producto_id)
+    const { rows: inv } = await pool.query(`
+      SELECT stock_actual FROM catalog.inventario WHERE producto_id=$1
+    `, [item.producto_id]).catch(() => ({ rows: null }))
+
+    if (inv && inv[0]) {
+      await pool.query(`
+        UPDATE catalog.inventario SET stock_actual=$1 WHERE producto_id=$2
+      `, [inv[0].stock_actual - item.cantidad, item.producto_id]).catch(() => {})
+    }
   }
 
   res.status(201).json(pedido[0])

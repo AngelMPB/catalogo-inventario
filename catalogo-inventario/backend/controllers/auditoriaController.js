@@ -1,41 +1,42 @@
-import supabase from '../config/supabaseClient.js'
+import pool from '../config/dbClient.js'
 
 export const obtenerLogs = async (req, res) => {
-  const { modulo, severidad } = req.query
+  const { modulo, severidad, accion, usuario } = req.query
+  let query = `SELECT * FROM catalog.logs_eventos WHERE 1=1`
+  const params = []
 
-  let query = supabase
-    .from('logs_eventos')
-    .select('*')
-    .order('created_at', { ascending: false })
+  if (modulo)    { params.push(modulo);    query += ` AND modulo=$${params.length}` }
+  if (severidad) { params.push(severidad); query += ` AND severidad=$${params.length}` }
+  if (accion)    { params.push(accion);    query += ` AND accion=$${params.length}` }
+  if (usuario)   { params.push(`%${usuario}%`); query += ` AND usuario ILIKE $${params.length}` }
 
-  if (modulo) query = query.eq('modulo', modulo)
-  if (severidad) query = query.eq('severidad', severidad)
+  query += ` ORDER BY created_at DESC`
 
-  const { data, error } = await query
-  if (error) return res.status(400).json(error)
-  res.json(data)
+  const { rows } = await pool.query(query, params).catch(() => ({ rows: null }))
+  if (!rows) return res.status(400).json({ mensaje: 'Error al obtener logs' })
+  res.json(rows)
 }
 
 export const obtenerLogsNotificaciones = async (req, res) => {
-  const { data, error } = await supabase
-    .from('logs_notificaciones')
-    .select('*, guias_envio(numero_guia)')
-    .order('created_at', { ascending: false })
-
-  if (error) return res.status(400).json(error)
-  res.json(data)
+  const { rows } = await pool.query(`
+    SELECT n.*, json_build_object('numero_guia', g.numero_guia, 'nombre_destinatario', g.nombre_destinatario) as guias_envio
+    FROM catalog.logs_notificaciones n
+    LEFT JOIN catalog.guias_envio g ON n.guia_id = g.id
+    ORDER BY n.created_at DESC
+  `).catch(() => ({ rows: null }))
+  if (!rows) return res.status(400).json({ mensaje: 'Error al obtener notificaciones' })
+  res.json(rows)
 }
 
 export const registrarEvento = async (req, res) => {
   const { usuario, accion, modulo, detalle, severidad } = req.body
-
   if (!accion) return res.status(400).json({ mensaje: 'La acción es obligatoria' })
 
-  const { data, error } = await supabase
-    .from('logs_eventos')
-    .insert([{ usuario, accion, modulo, detalle, severidad: severidad || 'info' }])
-    .select()
+  const { rows } = await pool.query(`
+    INSERT INTO catalog.logs_eventos (usuario, accion, modulo, detalle, severidad)
+    VALUES ($1, $2, $3, $4, $5) RETURNING *
+  `, [usuario, accion, modulo, detalle, severidad || 'info']).catch(() => ({ rows: null }))
 
-  if (error) return res.status(400).json(error)
-  res.status(201).json(data[0])
+  if (!rows) return res.status(400).json({ mensaje: 'Error al registrar evento' })
+  res.status(201).json(rows[0])
 }

@@ -1,18 +1,15 @@
-import supabase from '../config/supabaseClient.js'
+import pool from '../config/dbClient.js'
 
 const ESTADOS_VALIDOS = ['Pendiente', 'Preparación', 'En camino', 'Entregado', 'Cancelado']
-
 const FLUJO_VALIDO = {
-  'Pendiente':    ['Preparación', 'Cancelado'],
-  'Preparación':  ['En camino', 'Cancelado'],
-  'En camino':    ['Entregado', 'Cancelado'],
-  'Entregado':    [],
-  'Cancelado':    []
+  'Pendiente':   ['Preparación', 'Cancelado'],
+  'Preparación': ['En camino', 'Cancelado'],
+  'En camino':   ['Entregado', 'Cancelado'],
+  'Entregado':   [],
+  'Cancelado':   []
 }
 
-export const obtenerEstados = async (req, res) => {
-  res.json(ESTADOS_VALIDOS)
-}
+export const obtenerEstados = async (req, res) => res.json(ESTADOS_VALIDOS)
 
 export const cambiarEstado = async (req, res) => {
   const { id } = req.params
@@ -21,78 +18,61 @@ export const cambiarEstado = async (req, res) => {
   if (!estado_nuevo) return res.status(400).json({ mensaje: 'El estado es obligatorio' })
   if (!ESTADOS_VALIDOS.includes(estado_nuevo)) return res.status(400).json({ mensaje: 'Estado no válido' })
 
-  const { data: guia, error: errorGuia } = await supabase
-    .from('guias_envio')
-    .select('estado, numero_guia, nombre_destinatario')
-    .eq('id', id)
-    .single()
+  const { rows: guias } = await pool.query(`
+    SELECT g.*, p.correo_cliente FROM catalog.guias_envio g
+    LEFT JOIN catalog.pedidos p ON g.pedido_id = p.id
+    WHERE g.id=$1
+  `, [id]).catch(() => ({ rows: null }))
 
-  if (errorGuia) return res.status(404).json({ mensaje: 'Guía no encontrada' })
-
+  if (!guias || !guias[0]) return res.status(404).json({ mensaje: 'Guía no encontrada' })
+  const guia = guias[0]
   const estadoActual = guia.estado || 'Pendiente'
-  const siguientesPermitidos = FLUJO_VALIDO[estadoActual]
 
-  if (!siguientesPermitidos.includes(estado_nuevo)) {
+  if (!FLUJO_VALIDO[estadoActual].includes(estado_nuevo)) {
     return res.status(400).json({
       mensaje: `No se puede cambiar de "${estadoActual}" a "${estado_nuevo}"`,
-      permitidos: siguientesPermitidos
+      permitidos: FLUJO_VALIDO[estadoActual]
     })
   }
 
-  const { data, error } = await supabase
-    .from('guias_envio')
-    .update({ estado: estado_nuevo })
-    .eq('id', id)
-    .select()
+  const { rows } = await pool.query(`
+    UPDATE catalog.guias_envio SET estado=$1 WHERE id=$2 RETURNING *
+  `, [estado_nuevo, id]).catch(() => ({ rows: null }))
 
-  if (error) return res.status(400).json(error)
+  await pool.query(`
+    INSERT INTO catalog.historial_estados (guia_id, estado_anterior, estado_nuevo, usuario, comentario)
+    VALUES ($1, $2, $3, $4, $5)
+  `, [id, estadoActual, estado_nuevo, usuario || 'Admin', comentario || null]).catch(() => {})
 
-  await supabase.from('historial_estados').insert([{
-    guia_id: parseInt(id),
-    estado_anterior: estadoActual,
-    estado_nuevo,
-    usuario: usuario || 'Admin',
-    comentario: comentario || null
-  }])
+  await pool.query(`
+    INSERT INTO catalog.logs_eventos (usuario, accion, modulo, detalle, severidad)
+    VALUES ($1, 'CAMBIO_ESTADO', 'guias_envio', $2, 'info')
+  `, [usuario || 'Admin', `Guía ${guia.numero_guia}: ${estadoActual} → ${estado_nuevo}`]).catch(() => {})
 
-  await supabase.from('logs_eventos').insert([{
-    usuario: usuario || 'Admin',
-    accion: 'CAMBIO_ESTADO',
-    modulo: 'guias_envio',
-    detalle: `Guía ${guia.numero_guia}: ${estadoActual} → ${estado_nuevo}`,
-    severidad: 'info'
-  }])
-
-  res.json(data[0])
+  res.json(rows[0])
 }
 
 export const obtenerHistorial = async (req, res) => {
-  const { data, error } = await supabase
-    .from('historial_estados')
-    .select('*')
-    .eq('guia_id', req.params.id)
-    .order('created_at', { ascending: true })
-
-  if (error) return res.status(400).json(error)
-  res.json(data)
+  const { rows } = await pool.query(`
+    SELECT * FROM catalog.historial_estados WHERE guia_id=$1 ORDER BY created_at ASC
+  `, [req.params.id]).catch(() => ({ rows: null }))
+  if (!rows) return res.status(400).json({ mensaje: 'Error al obtener historial' })
+  res.json(rows)
 }
 
 export const trackingPublico = async (req, res) => {
-  const { numero_guia } = req.params
+  const { rows: guias } = await pool.query(`
+    SELECT g.*, json_build_object('numero_pedido', p.numero_pedido, 'nombre_cliente', p.nombre_cliente) as pedidos
+    FROM catalog.guias_envio g
+    LEFT JOIN catalog.pedidos p ON g.pedido_id = p.id
+    WHERE g.numero_guia=$1
+  `, [req.params.numero_guia]).catch(() => ({ rows: null }))
 
-  const { data: guia, error } = await supabase
-    .from('guias_envio')
-    .select('*, pedidos(numero_pedido, nombre_cliente)')
-    .eq('numero_guia', numero_guia)
-    .single()
+  if (!guias || !guias[0]) return res.status(404).json({ mensaje: 'Guía no encontrada' })
 
-  if (error) return res.status(404).json({ mensaje: 'Guía no encontrada' })
+  const { rows: historial } = await pool.query(`
+    SELECT * FROM catalog.historial_estados WHERE guia_id=$1 ORDER BY created_at ASC
+  `, [guias[0].id]).catch(() => ({ rows: [] }))
 
-  const { data: historial } = await supabase
-    .from('historial_estados')
-    .select('*')
-    .eq('guia_id', guia.id)
-    .order('created_at', { ascending: true })
-
-  res.json({ guia, historial: historial || [] })
+  res.json({ guia: guias[0], historial: historial || [] })
 }

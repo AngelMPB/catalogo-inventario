@@ -1,109 +1,75 @@
-import supabase from '../config/supabaseClient.js'
+import pool from '../config/dbClient.js'
 
 export const obtenerProductos = async (req, res) => {
-  const { categoria_id, habilitado } = req.query
-
-  let query = supabase.from('productos').select('*, categorias(nombre)')
-
-  if (categoria_id) query = query.eq('categoria_id', categoria_id)
-  if (habilitado !== undefined) query = query.eq('habilitado', habilitado === 'true')
-
-  const { data, error } = await query
-  if (error) return res.status(400).json(error)
+  const { data, error } = await pool.query(`
+    SELECT p.*, c.nombre as categoria_nombre
+    FROM catalog.productos p
+    LEFT JOIN catalog.categorias c ON p.categoria_id = c.id
+    ORDER BY p.id
+  `).then(r => ({ data: r.rows, error: null })).catch(e => ({ data: null, error: e }))
+  if (error) return res.status(400).json({ mensaje: error.message })
   res.json(data)
 }
 
 export const obtenerTodosProductos = async (req, res) => {
-  const { data, error } = await supabase
-    .from('productos')
-    .select('*, categorias(nombre)')
-
-  if (error) return res.status(400).json(error)
-  res.json(data)
-}
-
-export const obtenerProductoPorId = async (req, res) => {
-  const { data, error } = await supabase
-    .from('productos')
-    .select('*, categorias(nombre)')
-    .eq('id', req.params.id)
-    .single()
-
-  if (error) return res.status(404).json({ mensaje: 'Producto no encontrado' })
-  res.json(data)
+  const { rows, error } = await pool.query(`
+    SELECT p.*, c.nombre as categoria_nombre,
+      json_build_object('nombre', c.nombre) as categorias
+    FROM catalog.productos p
+    LEFT JOIN catalog.categorias c ON p.categoria_id = c.id
+    ORDER BY p.id
+  `).catch(e => ({ rows: null, error: e }))
+  if (!rows) return res.status(400).json({ mensaje: 'Error al obtener productos' })
+  res.json(rows)
 }
 
 export const crearProducto = async (req, res) => {
   const { nombre, descripcion, precio, imagen_url, categoria_id } = req.body
+  if (!nombre || !precio) return res.status(400).json({ mensaje: 'Nombre y precio son obligatorios' })
 
-  if (!nombre || !precio) {
-    return res.status(400).json({ mensaje: 'Nombre y precio son obligatorios' })
-  }
+  const { rows, error } = await pool.query(`
+    INSERT INTO catalog.productos (nombre, descripcion, precio, imagen_url, categoria_id)
+    VALUES ($1, $2, $3, $4, $5) RETURNING *
+  `, [nombre, descripcion, precio, imagen_url, categoria_id || null])
+    .catch(e => ({ rows: null, error: e }))
 
-  const { data, error } = await supabase
-    .from('productos')
-    .insert([{ nombre, descripcion, precio, imagen_url, categoria_id, habilitado: true }])
-    .select()
+  if (!rows) return res.status(400).json({ mensaje: 'Error al crear producto' })
 
-  if (error) return res.status(400).json(error)
+  // Crear registro en inventario automáticamente
+  await pool.query(`
+    INSERT INTO catalog.inventario (producto_id, stock_actual, stock_minimo)
+    VALUES ($1, 0, 5)
+  `, [rows[0].id]).catch(() => {})
 
-  await supabase
-    .from('inventario')
-    .insert([{ producto_id: data[0].id, stock_actual: 0, stock_minimo: 5 }])
-
-  res.status(201).json(data[0])
+  res.status(201).json(rows[0])
 }
 
-export const editarProducto = async (req, res) => {
+export const actualizarProducto = async (req, res) => {
+  const { id } = req.params
   const { nombre, descripcion, precio, imagen_url, categoria_id } = req.body
 
-  if (!nombre || !precio) {
-    return res.status(400).json({ mensaje: 'Nombre y precio son obligatorios' })
-  }
+  const { rows } = await pool.query(`
+    UPDATE catalog.productos
+    SET nombre=$1, descripcion=$2, precio=$3, imagen_url=$4, categoria_id=$5
+    WHERE id=$6 RETURNING *
+  `, [nombre, descripcion, precio, imagen_url, categoria_id || null, id])
+    .catch(() => ({ rows: null }))
 
-  const { data, error } = await supabase
-    .from('productos')
-    .update({ nombre, descripcion, precio, imagen_url, categoria_id })
-    .eq('id', req.params.id)
-    .select()
-
-  if (error) return res.status(400).json(error)
-  res.json(data[0])
+  if (!rows) return res.status(400).json({ mensaje: 'Error al actualizar' })
+  res.json(rows[0])
 }
 
 export const toggleHabilitado = async (req, res) => {
-  const { data: producto, error: errorGet } = await supabase
-    .from('productos')
-    .select('habilitado')
-    .eq('id', req.params.id)
-    .single()
-
-  if (errorGet) return res.status(404).json({ mensaje: 'Producto no encontrado' })
-
-  const { data, error } = await supabase
-    .from('productos')
-    .update({ habilitado: !producto.habilitado })
-    .eq('id', req.params.id)
-    .select()
-
-  if (error) return res.status(400).json(error)
-  res.json(data[0])
+  const { id } = req.params
+  const { rows } = await pool.query(`
+    UPDATE catalog.productos SET habilitado = NOT habilitado WHERE id=$1 RETURNING *
+  `, [id]).catch(() => ({ rows: null }))
+  if (!rows) return res.status(400).json({ mensaje: 'Error al cambiar estado' })
+  res.json(rows[0])
 }
 
 export const eliminarProducto = async (req, res) => {
-  const id = req.params.id
-
-  await supabase.from('detalle_pedido').delete().eq('producto_id', id)
-  await supabase.from('inventario').delete().eq('producto_id', id)
-
-  const { error } = await supabase
-    .from('productos')
-    .delete()
-    .eq('id', id)
-
-  if (error) {
-    console.log('ERROR SUPABASE:', JSON.stringify(error))
-    return res.status(400).json(error)
-  }
+  await pool.query(`DELETE FROM catalog.productos WHERE id=$1`, [req.params.id])
+    .catch(() => {})
   res.json({ mensaje: 'Producto eliminado' })
 }
