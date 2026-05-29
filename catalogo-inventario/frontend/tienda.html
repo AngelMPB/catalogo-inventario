@@ -326,6 +326,73 @@
     .toast.success { border-left: 3px solid #16a34a; }
     .toast.error { border-left: 3px solid var(--accent); }
 
+    /* Modal login */
+    .login-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 300;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .login-box {
+      background: #fff;
+      border-radius: 20px;
+      padding: 32px;
+      max-width: 380px;
+      width: 100%;
+    }
+
+    .login-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .login-sub { font-size: 14px; color: #6b6b6b; margin-bottom: 24px; }
+
+    .login-input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1.5px solid #e8e4dc;
+      border-radius: 12px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      outline: none;
+      margin-bottom: 12px;
+      transition: border 0.2s;
+    }
+
+    .login-input:focus { border-color: #1a1a1a; }
+
+    .login-error {
+      color: #e8390e;
+      font-size: 13px;
+      margin-bottom: 12px;
+      display: none;
+    }
+
+    .login-btns { display: flex; gap: 10px; }
+
+    .login-btn {
+      flex: 1;
+      padding: 12px;
+      border-radius: 12px;
+      border: none;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .login-btn.primary { background: #1a1a1a; color: #fff; }
+    .login-btn.primary:hover { background: #e8390e; }
+    .login-btn.secondary { background: transparent; border: 1.5px solid #e8e4dc; color: #6b6b6b; }
+
     @media (max-width: 640px) {
       nav { padding: 0 16px; }
       .hero { padding: 32px 16px 40px; }
@@ -346,7 +413,7 @@
     <input type="text" id="buscarInput" placeholder="Buscar productos..." oninput="filtrar()">
   </div>
   <div class="nav-links">
-    <a href="index.html" class="nav-btn">Admin</a>
+    <a href="#" class="nav-btn" onclick="abrirLogin()">🔒 Admin</a>
   </div>
 </nav>
 
@@ -374,6 +441,20 @@
 
 <div class="toast" id="toast"></div>
 
+<!-- Modal login admin -->
+<div class="login-overlay" id="login-overlay" onclick="if(event.target===this)cerrarLogin()">
+  <div class="login-box">
+    <div class="login-title">🔒 Acceso Admin</div>
+    <div class="login-sub">Ingresa la contraseña para acceder al panel de administración.</div>
+    <input type="password" class="login-input" id="login-pass" placeholder="Contraseña" onkeydown="if(event.key==='Enter')verificarAdmin()">
+    <div class="login-error" id="login-error">Contraseña incorrecta. Intenta de nuevo.</div>
+    <div class="login-btns">
+      <button class="login-btn primary" onclick="verificarAdmin()">Ingresar</button>
+      <button class="login-btn secondary" onclick="cerrarLogin()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
 <!-- Modal detalle producto -->
 <div id="modal-producto" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:200;align-items:center;justify-content:center;padding:20px" onclick="if(event.target===this)cerrarModal()">
   <div style="background:#fff;border-radius:20px;max-width:560px;width:100%;overflow:hidden;display:flex;flex-direction:column;max-height:90vh;overflow-y:auto">
@@ -391,11 +472,35 @@
   </div>
 </div>
 
+<script>
+  function abrirLogin() {
+    document.getElementById('login-overlay').style.display = 'flex'
+    document.getElementById('login-pass').value = ''
+    document.getElementById('login-error').style.display = 'none'
+    setTimeout(() => document.getElementById('login-pass').focus(), 100)
+  }
+
+  function cerrarLogin() {
+    document.getElementById('login-overlay').style.display = 'none'
+  }
+
+  function verificarAdmin() {
+    const pass = document.getElementById('login-pass').value
+    if (pass === 'admin1234') {
+      window.location.href = 'index.html'
+    } else {
+      document.getElementById('login-error').style.display = 'block'
+      document.getElementById('login-pass').value = ''
+      document.getElementById('login-pass').focus()
+    }
+  }
+</script>
+
 <script type="module">
   import API_BASE from './js/config.js'
   const API = `${API_BASE}/productos`
   const API_CAT = `${API_BASE}/categorias`
-  const CARRITO_API = 'https://carrito-frontend-295165555939.us-central1.run.app'
+  const CARRITO_API = 'https://carrito-service-295165555939.us-central1.run.app'
 
   let todos = []
   let catActiva = null
