@@ -19,14 +19,8 @@
       --radius: 16px;
     }
 
-    body {
-      font-family: 'DM Sans', sans-serif;
-      background: var(--bg);
-      color: var(--dark);
-      min-height: 100vh;
-    }
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--dark); min-height: 100vh; }
 
-    /* NAVBAR */
     nav {
       background: var(--dark);
       padding: 0 32px;
@@ -49,11 +43,7 @@
       flex-shrink: 0;
     }
 
-    .nav-search {
-      flex: 1;
-      max-width: 480px;
-      position: relative;
-    }
+    .nav-search { flex: 1; max-width: 480px; position: relative; }
 
     .nav-search input {
       width: 100%;
@@ -99,7 +89,6 @@
     .nav-btn.primary { background: var(--accent); color: #fff; }
     .nav-btn.primary:hover { background: #c72d08; }
 
-    /* HERO */
     .hero {
       background: var(--dark);
       padding: 48px 32px 56px;
@@ -156,14 +145,8 @@
     }
 
     .hero h1 span { color: var(--accent2); }
+    .hero p { color: rgba(255,255,255,0.5); font-size: 16px; max-width: 400px; }
 
-    .hero p {
-      color: rgba(255,255,255,0.5);
-      font-size: 16px;
-      max-width: 400px;
-    }
-
-    /* CATEGORIAS FILTRO */
     .filter-bar {
       background: var(--surface);
       border-bottom: 1px solid var(--light);
@@ -203,12 +186,7 @@
     .cat-btn:hover { border-color: var(--dark); color: var(--dark); }
     .cat-btn.active { background: var(--dark); color: #fff; border-color: var(--dark); }
 
-    /* CONTENIDO */
-    .main {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 32px;
-    }
+    .main { max-width: 1200px; margin: 0 auto; padding: 32px; }
 
     .section-header {
       display: flex;
@@ -217,19 +195,9 @@
       margin-bottom: 24px;
     }
 
-    .section-title {
-      font-family: 'Syne', sans-serif;
-      font-size: 22px;
-      font-weight: 700;
-      letter-spacing: -0.5px;
-    }
+    .section-title { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
+    .section-count { font-size: 13px; color: var(--mid); }
 
-    .section-count {
-      font-size: 13px;
-      color: var(--mid);
-    }
-
-    /* GRID PRODUCTOS */
     .products-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -245,10 +213,7 @@
       position: relative;
     }
 
-    .product-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 40px rgba(0,0,0,0.1);
-    }
+    .product-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.1); }
 
     .product-img {
       width: 100%;
@@ -262,16 +227,11 @@
       overflow: hidden;
     }
 
-    .product-img img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
+    .product-img img { width: 100%; height: 100%; object-fit: cover; }
 
     .product-badge {
       position: absolute;
-      top: 10px;
-      left: 10px;
+      top: 10px; left: 10px;
       background: var(--accent);
       color: #fff;
       font-size: 11px;
@@ -280,9 +240,7 @@
       border-radius: 6px;
     }
 
-    .product-info {
-      padding: 14px;
-    }
+    .product-info { padding: 14px; }
 
     .product-cat {
       font-size: 11px;
@@ -304,19 +262,9 @@
       overflow: hidden;
     }
 
-    .product-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-    }
+    .product-footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 
-    .product-price {
-      font-family: 'Syne', sans-serif;
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--accent);
-    }
+    .product-price { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; color: var(--accent); }
 
     .btn-cart {
       background: var(--dark);
@@ -334,18 +282,11 @@
 
     .btn-cart:hover { background: var(--accent); }
 
-    /* EMPTY */
-    .empty {
-      text-align: center;
-      padding: 80px 32px;
-      grid-column: 1 / -1;
-    }
-
+    .empty { text-align: center; padding: 80px 32px; grid-column: 1 / -1; }
     .empty-icon { font-size: 64px; margin-bottom: 16px; }
     .empty-title { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 700; margin-bottom: 8px; }
     .empty-sub { color: var(--mid); font-size: 14px; }
 
-    /* SKELETON */
     .skeleton {
       background: linear-gradient(90deg, var(--light) 25%, #e0dbd3 50%, var(--light) 75%);
       background-size: 200% 100%;
@@ -355,23 +296,16 @@
 
     @keyframes shimmer { to { background-position: -200% 0; } }
 
-    .skeleton-card {
-      background: var(--surface);
-      border-radius: var(--radius);
-      overflow: hidden;
-    }
-
+    .skeleton-card { background: var(--surface); border-radius: var(--radius); overflow: hidden; }
     .skeleton-img { width: 100%; aspect-ratio: 1; }
     .skeleton-text { margin: 14px; height: 12px; border-radius: 4px; }
     .skeleton-text.w60 { width: 60%; }
     .skeleton-text.w80 { width: 80%; margin-top: 8px; }
     .skeleton-text.w40 { width: 40%; margin-top: 8px; }
 
-    /* TOAST */
     .toast {
       position: fixed;
-      bottom: 24px;
-      right: 24px;
+      bottom: 24px; right: 24px;
       background: var(--dark);
       color: #fff;
       padding: 14px 20px;
@@ -440,16 +374,32 @@
 
 <div class="toast" id="toast"></div>
 
+<!-- Modal detalle producto -->
+<div id="modal-producto" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:200;align-items:center;justify-content:center;padding:20px" onclick="if(event.target===this)cerrarModal()">
+  <div style="background:#fff;border-radius:20px;max-width:560px;width:100%;overflow:hidden;display:flex;flex-direction:column;max-height:90vh;overflow-y:auto">
+    <div id="modal-img" style="width:100%;aspect-ratio:1.4;background:#f5f3ef;display:flex;align-items:center;justify-content:center;font-size:80px;flex-shrink:0"></div>
+    <div style="padding:24px">
+      <div id="modal-cat" style="font-size:11px;color:#6b6b6b;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px"></div>
+      <div id="modal-nombre" style="font-family:'Syne',sans-serif;font-size:22px;font-weight:700;margin-bottom:8px"></div>
+      <div id="modal-precio" style="font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:#e8390e;margin-bottom:12px"></div>
+      <div id="modal-desc" style="font-size:14px;color:#6b6b6b;line-height:1.6;margin-bottom:20px"></div>
+      <div style="display:flex;gap:10px">
+        <button id="modal-btn" class="btn-cart" style="flex:1;padding:14px;font-size:15px;border-radius:12px">+ Agregar al carrito</button>
+        <button onclick="cerrarModal()" style="padding:14px 20px;border-radius:12px;border:1.5px solid #e8e4dc;background:transparent;cursor:pointer;font-size:14px;font-family:'DM Sans',sans-serif">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script type="module">
   import API_BASE from './js/config.js'
   const API = `${API_BASE}/productos`
   const API_CAT = `${API_BASE}/categorias`
-
-  // URL base del carrito de Isa
   const CARRITO_API = 'https://carrito-frontend-295165555939.us-central1.run.app'
 
   let todos = []
   let catActiva = null
+  const EMOJIS = ['👟','👗','📱','🏠','⚽','💄','📚','🧸','🎮','🎒','🌿','🍳']
 
   const grid = document.getElementById('grid')
   const countLabel = document.getElementById('countLabel')
@@ -483,16 +433,12 @@
         </div>`
       return
     }
-
-    const EMOJIS = ['👟','👗','📱','🏠','⚽','💄','📚','🧸','🎮','🎒','🌿','🍳']
-
     grid.innerHTML = data.map((p, i) => `
-      <div class="product-card">
+      <div class="product-card" onclick="verDetalle(${p.id})">
         <div class="product-img">
           ${p.imagen_url
             ? `<img src="${p.imagen_url}" alt="${p.nombre}" onerror="this.parentElement.innerHTML='${EMOJIS[i % EMOJIS.length]}'"/>`
-            : EMOJIS[i % EMOJIS.length]
-          }
+            : EMOJIS[i % EMOJIS.length]}
           ${i < 3 ? '<div class="product-badge">NUEVO</div>' : ''}
         </div>
         <div class="product-info">
@@ -500,12 +446,38 @@
           <div class="product-name">${p.nombre}</div>
           <div class="product-footer">
             <div class="product-price">$${parseFloat(p.precio).toLocaleString('es-CO')}</div>
-            <button class="btn-cart" onclick="agregarCarrito(${p.id}, '${p.nombre.replace(/'/g,"\\'")}')">
+            <button class="btn-cart" onclick="event.stopPropagation();agregarCarrito(${p.id}, '${p.nombre.replace(/'/g,"\\'")}')">
               + Carrito
             </button>
           </div>
         </div>
       </div>`).join('')
+  }
+
+  window.verDetalle = (id) => {
+    const p = todos.find(x => x.id === id)
+    if (!p) return
+    const i = todos.indexOf(p)
+    document.getElementById('modal-img').innerHTML = p.imagen_url
+      ? `<img src="${p.imagen_url}" alt="${p.nombre}" style="width:100%;height:100%;object-fit:cover" onerror="this.parentElement.innerHTML='${EMOJIS[i % EMOJIS.length]}'"/>`
+      : `<span style="font-size:80px">${EMOJIS[i % EMOJIS.length]}</span>`
+    document.getElementById('modal-cat').textContent = p.categoria_nombre || 'General'
+    document.getElementById('modal-nombre').textContent = p.nombre
+    document.getElementById('modal-precio').textContent = `$${parseFloat(p.precio).toLocaleString('es-CO')}`
+    document.getElementById('modal-desc').textContent = p.descripcion || 'Sin descripción disponible.'
+    document.getElementById('modal-btn').onclick = () => agregarCarrito(p.id, p.nombre)
+    document.getElementById('modal-producto').style.display = 'flex'
+  }
+
+  window.cerrarModal = () => {
+    document.getElementById('modal-producto').style.display = 'none'
+  }
+
+  window.filtrarCategoria = (id, btn) => {
+    catActiva = id
+    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'))
+    btn.classList.add('active')
+    filtrar()
   }
 
   function filtrar() {
@@ -518,20 +490,9 @@
     render(filtrados)
   }
 
-  window.filtrarCategoria = (id, btn) => {
-    catActiva = id
-    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'))
-    btn.classList.add('active')
-    filtrar()
-  }
-
   window.filtrar = filtrar
 
   window.agregarCarrito = async (productoId, nombre) => {
-    if (!CARRITO_API) {
-      showToast('Carrito próximamente disponible', 'error')
-      return
-    }
     try {
       const res = await fetch(`${CARRITO_API}/carrito`, {
         method: 'POST',
@@ -552,10 +513,7 @@
         fetch(`${API}/todos`).then(r => r.json()),
         fetch(API_CAT).then(r => r.json())
       ])
-
       todos = prods.filter(p => p.habilitado !== false)
-
-      // Agregar botones de categoría
       cats.forEach(c => {
         const btn = document.createElement('button')
         btn.className = 'cat-btn'
@@ -563,7 +521,6 @@
         btn.onclick = () => window.filtrarCategoria(c.id, btn)
         filtrosCat.appendChild(btn)
       })
-
       filtrar()
     } catch (e) {
       grid.innerHTML = `

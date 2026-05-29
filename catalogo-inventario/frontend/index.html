@@ -23,12 +23,20 @@
     <div class="nav-section">Sprint 2</div>
     <a href="pedidos.html" class="nav-item"><span class="nav-icon">🛒</span>Pedidos</a>
     <a href="guias.html" class="nav-item"><span class="nav-icon">🚚</span>Guías de envío</a>
+    <div class="nav-section">Sprint 3</div>
+    <a href="seguimiento.html" class="nav-item"><span class="nav-icon">📍</span>Seguimiento</a>
+    <a href="tracking.html" class="nav-item"><span class="nav-icon">🔍</span>Tracking público</a>
+    <div class="nav-section">Sprint 4</div>
+    <a href="auditoria.html" class="nav-item"><span class="nav-icon">📋</span>Auditoría</a>
   </aside>
   <div class="main">
     <div class="topbar">
       <div class="topbar-left">
         <span class="topbar-title">Dashboard</span>
         <span class="topbar-sub">Resumen general del sistema</span>
+      </div>
+      <div class="topbar-right">
+        <a href="tienda.html" target="_blank"><button class="btn btn-primary">🛒 Ver tienda</button></a>
       </div>
     </div>
     <div class="content">
@@ -46,7 +54,7 @@
         <div class="stat">
           <div class="stat-icon">⚠️</div>
           <div class="stat-label">Stock bajo</div>
-          <div class="stat-value" id="s-stock">—</div>
+          <div class="stat-value" id="s-stock">0</div>
         </div>
         <div class="stat">
           <div class="stat-icon">🛒</div>
@@ -67,33 +75,33 @@
           <a href="inventario.html"><button class="btn btn-secondary">📊 Inventario</button></a>
           <a href="pedidos.html"><button class="btn btn-secondary">🛒 Pedidos</button></a>
           <a href="guias.html"><button class="btn btn-secondary">🚚 Guías</button></a>
-          <div class="nav-section">Sprint 3</div>
-<a href="seguimiento.html" class="nav-item"><span class="nav-icon">📍</span>Seguimiento</a>
-<a href="tracking.html" class="nav-item"><span class="nav-icon">🔍</span>Tracking público</a>
-<div class="nav-section">Sprint 4</div>
-<a href="auditoria.html" class="nav-item"><span class="nav-icon">📋</span>Auditoría</a>
+          <a href="seguimiento.html"><button class="btn btn-secondary">📍 Seguimiento</button></a>
+          <a href="tracking.html"><button class="btn btn-secondary">🔍 Tracking</button></a>
+          <a href="auditoria.html"><button class="btn btn-secondary">📋 Auditoría</button></a>
+          <a href="tienda.html" target="_blank"><button class="btn btn-primary">🛒 Ver tienda</button></a>
         </div>
       </div>
     </div>
   </div>
 </div>
-<script>
-const BASE = "http://localhost:3000"
+<script type="module">
+import API_BASE from './js/config.js'
+
 async function cargarStats() {
   try {
     const [prods, cats] = await Promise.all([
-      fetch(`${BASE}/productos/todos`).then(r => r.json()),
-      fetch(`${BASE}/categorias`).then(r => r.json())
+      fetch(`${API_BASE}/productos/todos`).then(r => r.json()),
+      fetch(`${API_BASE}/categorias`).then(r => r.json())
     ])
     document.getElementById("s-productos").textContent = prods.length
     document.getElementById("s-categorias").textContent = cats.length
   } catch(e) { console.error(e) }
   try {
-    const inv = await fetch(`${BASE}/inventario/alertas`).then(r => r.json())
+    const inv = await fetch(`${API_BASE}/inventario/alertas`).then(r => r.json())
     document.getElementById("s-stock").textContent = inv.length
   } catch { document.getElementById("s-stock").textContent = "0" }
   try {
-    const peds = await fetch(`${BASE}/pedidos`).then(r => r.json())
+    const peds = await fetch(`${API_BASE}/pedidos`).then(r => r.json())
     document.getElementById("s-pedidos").textContent = peds.length
   } catch { document.getElementById("s-pedidos").textContent = "0" }
 }
