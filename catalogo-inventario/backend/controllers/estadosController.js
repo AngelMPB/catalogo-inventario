@@ -19,8 +19,7 @@ export const cambiarEstado = async (req, res) => {
   if (!ESTADOS_VALIDOS.includes(estado_nuevo)) return res.status(400).json({ mensaje: 'Estado no válido' })
 
   const { rows: guias } = await pool.query(`
-    SELECT g.*, p.correo_cliente FROM catalog.guias_envio g
-    LEFT JOIN catalog.pedidos p ON g.pedido_id = p.id
+    SELECT g.* FROM catalog.guias_envio g
     WHERE g.id=$1
   `, [id]).catch(() => ({ rows: null }))
 
