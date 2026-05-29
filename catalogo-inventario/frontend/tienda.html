@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catálogo — Tienda</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f5f3ef;
+      --surface: #ffffff;
+      --accent: #e8390e;
+      --accent2: #f7c948;
+      --dark: #1a1a1a;
+      --mid: #6b6b6b;
+      --light: #e8e4dc;
+      --radius: 16px;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--dark);
+      min-height: 100vh;
+    }
+
+    /* NAVBAR */
+    nav {
+      background: var(--dark);
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      height: 64px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 22px;
+      color: var(--accent2);
+      letter-spacing: -0.5px;
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+
+    .nav-search {
+      flex: 1;
+      max-width: 480px;
+      position: relative;
+    }
+
+    .nav-search input {
+      width: 100%;
+      padding: 10px 16px 10px 42px;
+      border-radius: 100px;
+      border: none;
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      outline: none;
+      transition: background 0.2s;
+    }
+
+    .nav-search input::placeholder { color: rgba(255,255,255,0.4); }
+    .nav-search input:focus { background: rgba(255,255,255,0.15); }
+
+    .nav-search svg {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: rgba(255,255,255,0.4);
+    }
+
+    .nav-links { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+
+    .nav-btn {
+      padding: 8px 16px;
+      border-radius: 100px;
+      border: none;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      color: rgba(255,255,255,0.7);
+      background: transparent;
+      transition: all 0.2s;
+    }
+
+    .nav-btn:hover { color: #fff; background: rgba(255,255,255,0.1); }
+    .nav-btn.primary { background: var(--accent); color: #fff; }
+    .nav-btn.primary:hover { background: #c72d08; }
+
+    /* HERO */
+    .hero {
+      background: var(--dark);
+      padding: 48px 32px 56px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -40px; right: -40px;
+      width: 300px; height: 300px;
+      background: var(--accent);
+      border-radius: 50%;
+      opacity: 0.15;
+      filter: blur(60px);
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: -60px; left: 200px;
+      width: 200px; height: 200px;
+      background: var(--accent2);
+      border-radius: 50%;
+      opacity: 0.12;
+      filter: blur(50px);
+    }
+
+    .hero-inner { max-width: 1200px; margin: 0 auto; position: relative; }
+
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(232,57,14,0.2);
+      border: 1px solid rgba(232,57,14,0.4);
+      color: var(--accent);
+      padding: 4px 12px;
+      border-radius: 100px;
+      font-size: 12px;
+      font-weight: 500;
+      margin-bottom: 16px;
+    }
+
+    .hero h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(36px, 5vw, 64px);
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.05;
+      letter-spacing: -2px;
+      margin-bottom: 12px;
+    }
+
+    .hero h1 span { color: var(--accent2); }
+
+    .hero p {
+      color: rgba(255,255,255,0.5);
+      font-size: 16px;
+      max-width: 400px;
+    }
+
+    /* CATEGORIAS FILTRO */
+    .filter-bar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--light);
+      padding: 0 32px;
+      position: sticky;
+      top: 64px;
+      z-index: 90;
+    }
+
+    .filter-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      gap: 4px;
+      overflow-x: auto;
+      padding: 12px 0;
+      scrollbar-width: none;
+    }
+
+    .filter-inner::-webkit-scrollbar { display: none; }
+
+    .cat-btn {
+      flex-shrink: 0;
+      padding: 7px 16px;
+      border-radius: 100px;
+      border: 1.5px solid var(--light);
+      background: transparent;
+      color: var(--mid);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.18s;
+      white-space: nowrap;
+    }
+
+    .cat-btn:hover { border-color: var(--dark); color: var(--dark); }
+    .cat-btn.active { background: var(--dark); color: #fff; border-color: var(--dark); }
+
+    /* CONTENIDO */
+    .main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 32px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+
+    .section-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .section-count {
+      font-size: 13px;
+      color: var(--mid);
+    }
+
+    /* GRID PRODUCTOS */
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .product-card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .product-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.1);
+    }
+
+    .product-img {
+      width: 100%;
+      aspect-ratio: 1;
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 56px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .product-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .product-badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: var(--accent);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+
+    .product-info {
+      padding: 14px;
+    }
+
+    .product-cat {
+      font-size: 11px;
+      color: var(--mid);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+
+    .product-name {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--dark);
+      line-height: 1.3;
+      margin-bottom: 10px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .product-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .product-price {
+      font-family: 'Syne', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .btn-cart {
+      background: var(--dark);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 8px 14px;
+      font-size: 12px;
+      font-weight: 500;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      transition: background 0.18s;
+      white-space: nowrap;
+    }
+
+    .btn-cart:hover { background: var(--accent); }
+
+    /* EMPTY */
+    .empty {
+      text-align: center;
+      padding: 80px 32px;
+      grid-column: 1 / -1;
+    }
+
+    .empty-icon { font-size: 64px; margin-bottom: 16px; }
+    .empty-title { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+    .empty-sub { color: var(--mid); font-size: 14px; }
+
+    /* SKELETON */
+    .skeleton {
+      background: linear-gradient(90deg, var(--light) 25%, #e0dbd3 50%, var(--light) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.2s infinite;
+      border-radius: 8px;
+    }
+
+    @keyframes shimmer { to { background-position: -200% 0; } }
+
+    .skeleton-card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .skeleton-img { width: 100%; aspect-ratio: 1; }
+    .skeleton-text { margin: 14px; height: 12px; border-radius: 4px; }
+    .skeleton-text.w60 { width: 60%; }
+    .skeleton-text.w80 { width: 80%; margin-top: 8px; }
+    .skeleton-text.w40 { width: 40%; margin-top: 8px; }
+
+    /* TOAST */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--dark);
+      color: #fff;
+      padding: 14px 20px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+      transform: translateY(80px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      z-index: 1000;
+    }
+
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.success { border-left: 3px solid #16a34a; }
+    .toast.error { border-left: 3px solid var(--accent); }
+
+    @media (max-width: 640px) {
+      nav { padding: 0 16px; }
+      .hero { padding: 32px 16px 40px; }
+      .main { padding: 20px 16px; }
+      .filter-bar { padding: 0 16px; }
+      .products-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="#" class="nav-logo">📦 Catálogo</a>
+  <div class="nav-search">
+    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+    </svg>
+    <input type="text" id="buscarInput" placeholder="Buscar productos..." oninput="filtrar()">
+  </div>
+  <div class="nav-links">
+    <a href="index.html" class="nav-btn">Admin</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-tag">✦ Nueva colección disponible</div>
+    <h1>Todo lo que<br>necesitas, <span>aquí.</span></h1>
+    <p>Explora nuestro catálogo completo con los mejores precios y calidad garantizada.</p>
+  </div>
+</div>
+
+<div class="filter-bar">
+  <div class="filter-inner" id="filtrosCat">
+    <button class="cat-btn active" onclick="filtrarCategoria(null, this)">Todo</button>
+  </div>
+</div>
+
+<div class="main">
+  <div class="section-header">
+    <span class="section-title">Productos</span>
+    <span class="section-count" id="countLabel">Cargando...</span>
+  </div>
+  <div class="products-grid" id="grid"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+  import API_BASE from './config.js'
+  const API = `${API_BASE}/productos`
+  const API_CAT = `${API_BASE}/categorias`
+
+  // URL del carrito — reemplazar cuando Grupo Isa comparta su URL
+  const CARRITO_API = null // 'https://carrito-url.run.app'
+
+  let todos = []
+  let catActiva = null
+
+  const grid = document.getElementById('grid')
+  const countLabel = document.getElementById('countLabel')
+  const filtrosCat = document.getElementById('filtrosCat')
+
+  function showToast(msg, tipo = 'success') {
+    const t = document.getElementById('toast')
+    t.textContent = (tipo === 'success' ? '✓ ' : '✕ ') + msg
+    t.className = `toast ${tipo} show`
+    setTimeout(() => t.className = 'toast', 2800)
+  }
+
+  function renderSkeleton() {
+    grid.innerHTML = Array(8).fill(`
+      <div class="skeleton-card">
+        <div class="skeleton skeleton-img"></div>
+        <div class="skeleton skeleton-text w60"></div>
+        <div class="skeleton skeleton-text w80"></div>
+        <div class="skeleton skeleton-text w40"></div>
+      </div>`).join('')
+  }
+
+  function render(data) {
+    countLabel.textContent = `${data.length} producto${data.length !== 1 ? 's' : ''}`
+    if (!data.length) {
+      grid.innerHTML = `
+        <div class="empty">
+          <div class="empty-icon">🔍</div>
+          <div class="empty-title">Sin resultados</div>
+          <div class="empty-sub">Intenta con otra búsqueda o categoría</div>
+        </div>`
+      return
+    }
+
+    const EMOJIS = ['👟','👗','📱','🏠','⚽','💄','📚','🧸','🎮','🎒','🌿','🍳']
+
+    grid.innerHTML = data.map((p, i) => `
+      <div class="product-card">
+        <div class="product-img">
+          ${p.imagen_url
+            ? `<img src="${p.imagen_url}" alt="${p.nombre}" onerror="this.parentElement.innerHTML='${EMOJIS[i % EMOJIS.length]}'"/>`
+            : EMOJIS[i % EMOJIS.length]
+          }
+          ${i < 3 ? '<div class="product-badge">NUEVO</div>' : ''}
+        </div>
+        <div class="product-info">
+          <div class="product-cat">${p.categoria_nombre || 'General'}</div>
+          <div class="product-name">${p.nombre}</div>
+          <div class="product-footer">
+            <div class="product-price">$${parseFloat(p.precio).toLocaleString('es-CO')}</div>
+            <button class="btn-cart" onclick="agregarCarrito(${p.id}, '${p.nombre.replace(/'/g,"\\'")}')">
+              + Carrito
+            </button>
+          </div>
+        </div>
+      </div>`).join('')
+  }
+
+  function filtrar() {
+    const q = document.getElementById('buscarInput').value.toLowerCase()
+    const filtrados = todos.filter(p => {
+      const matchQ = p.nombre.toLowerCase().includes(q) || (p.descripcion || '').toLowerCase().includes(q)
+      const matchCat = catActiva === null || p.categoria_id == catActiva
+      return matchQ && matchCat && p.habilitado !== false
+    })
+    render(filtrados)
+  }
+
+  window.filtrarCategoria = (id, btn) => {
+    catActiva = id
+    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'))
+    btn.classList.add('active')
+    filtrar()
+  }
+
+  window.filtrar = filtrar
+
+  window.agregarCarrito = async (productoId, nombre) => {
+    if (!CARRITO_API) {
+      showToast('Carrito próximamente disponible', 'error')
+      return
+    }
+    try {
+      const res = await fetch(`${CARRITO_API}/carrito`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ producto_id: productoId, cantidad: 1 })
+      })
+      if (res.ok) showToast(`${nombre} agregado al carrito`)
+      else showToast('Error al agregar al carrito', 'error')
+    } catch {
+      showToast('Error de conexión', 'error')
+    }
+  }
+
+  async function cargar() {
+    renderSkeleton()
+    try {
+      const [prods, cats] = await Promise.all([
+        fetch(`${API}/todos`).then(r => r.json()),
+        fetch(API_CAT).then(r => r.json())
+      ])
+
+      todos = prods.filter(p => p.habilitado !== false)
+
+      // Agregar botones de categoría
+      cats.forEach(c => {
+        const btn = document.createElement('button')
+        btn.className = 'cat-btn'
+        btn.textContent = c.nombre
+        btn.onclick = () => window.filtrarCategoria(c.id, btn)
+        filtrosCat.appendChild(btn)
+      })
+
+      filtrar()
+    } catch (e) {
+      grid.innerHTML = `
+        <div class="empty">
+          <div class="empty-icon">⚠️</div>
+          <div class="empty-title">Error al cargar</div>
+          <div class="empty-sub">No se pudo conectar al servidor</div>
+        </div>`
+      countLabel.textContent = '0 productos'
+    }
+  }
+
+  cargar()
+</script>
+</body>
+</html>
