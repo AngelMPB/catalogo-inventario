@@ -455,7 +455,7 @@
   }
 
   window.verDetalle = (id) => {
-    const p = todos.find(x => x.id === id)
+    const p = todos.find(x => String(x.id) === String(id))
     if (!p) return
     const i = todos.indexOf(p)
     document.getElementById('modal-img').innerHTML = p.imagen_url
