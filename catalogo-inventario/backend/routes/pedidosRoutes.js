@@ -1,18 +1,14 @@
 import express from 'express'
 import {
-  obtenerInventario,
-  actualizarStock,
-  ajusteManual,
-  obtenerHistorialAjustes,
-  actualizarStockAutomatico
-} from '../controllers/inventarioController.js'
+  obtenerPedidos,
+  obtenerPedidoPorId,
+  crearPedido
+} from '../controllers/pedidosController.js'
 
 const router = express.Router()
 
-router.get('/', obtenerInventario)
-router.put('/:id', actualizarStock)
-router.post('/ajuste', ajusteManual)
-router.get('/ajustes', obtenerHistorialAjustes)
-router.patch('/stock-automatico', actualizarStockAutomatico)
+router.get('/', obtenerPedidos)
+router.get('/:id', obtenerPedidoPorId)
+router.post('/', crearPedido)
 
 export default router

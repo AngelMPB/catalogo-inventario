@@ -31,17 +31,6 @@ export const crearPedido = async (req, res) => {
   if (!nombre_cliente) return res.status(400).json({ mensaje: 'El nombre del cliente es obligatorio' })
   if (!items || !items.length) return res.status(400).json({ mensaje: 'El pedido debe tener al menos un producto' })
 
-  // Verificar stock de cada producto
-  for (const item of items) {
-    const { rows: inv } = await pool.query(`
-      SELECT stock_actual FROM catalog.inventario WHERE producto_id=$1
-    `, [item.producto_id]).catch(() => ({ rows: null }))
-
-    if (!inv || !inv[0] || inv[0].stock_actual < item.cantidad) {
-      return res.status(400).json({ mensaje: `Stock insuficiente para el producto ID ${item.producto_id}` })
-    }
-  }
-
   const numero_pedido = 'PED-' + Date.now()
 
   const { rows: pedido } = await pool.query(`
@@ -51,7 +40,6 @@ export const crearPedido = async (req, res) => {
 
   if (!pedido) return res.status(400).json({ mensaje: 'Error al crear pedido' })
 
-  // Insertar detalle y descontar stock
   for (const item of items) {
     await pool.query(`
       INSERT INTO catalog.detalle_pedido (pedido_id, producto_id, cantidad, precio_unitario)
@@ -65,7 +53,7 @@ export const crearPedido = async (req, res) => {
     if (inv && inv[0]) {
       await pool.query(`
         UPDATE catalog.inventario SET stock_actual=$1 WHERE producto_id=$2
-      `, [inv[0].stock_actual - item.cantidad, item.producto_id]).catch(() => {})
+      `, [Math.max(0, inv[0].stock_actual - item.cantidad), item.producto_id]).catch(() => {})
     }
   }
 
