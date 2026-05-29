@@ -35,7 +35,6 @@ export const crearProducto = async (req, res) => {
 
   if (!rows) return res.status(400).json({ mensaje: 'Error al crear producto' })
 
-  // Crear registro en inventario automáticamente
   await pool.query(`
     INSERT INTO catalog.inventario (producto_id, stock_actual, stock_minimo)
     VALUES ($1, 0, 5)
@@ -69,7 +68,10 @@ export const toggleHabilitado = async (req, res) => {
 }
 
 export const eliminarProducto = async (req, res) => {
-  await pool.query(`DELETE FROM catalog.productos WHERE id=$1`, [req.params.id])
-    .catch(() => {})
+  const id = req.params.id
+  await pool.query(`DELETE FROM catalog.inventario WHERE producto_id=$1`, [id]).catch(() => {})
+  await pool.query(`DELETE FROM catalog.detalle_pedido WHERE producto_id=$1`, [id]).catch(() => {})
+  await pool.query(`DELETE FROM catalog.productos WHERE id=$1`, [id]).catch(() => {})
   res.json({ mensaje: 'Producto eliminado' })
 }
+``
