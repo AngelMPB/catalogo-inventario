@@ -441,12 +441,12 @@
 <div class="toast" id="toast"></div>
 
 <script type="module">
-  import API_BASE from './config.js'
+  import API_BASE from './js/config.js'
   const API = `${API_BASE}/productos`
   const API_CAT = `${API_BASE}/categorias`
 
-  // URL del carrito — reemplazar cuando Grupo Isa comparta su URL
-  const CARRITO_API = null // 'https://carrito-url.run.app'
+  // URL base del carrito de Isa
+  const CARRITO_API = 'https://carrito-frontend-295165555939.us-central1.run.app'
 
   let todos = []
   let catActiva = null
