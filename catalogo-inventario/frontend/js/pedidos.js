@@ -1,14 +1,15 @@
-const API_PED = "http://localhost:3000/pedidos"
-const API_PROD = "http://localhost:3000/productos"
+import API_BASE from './config.js'
+const API_PED = `${API_BASE}/pedidos`
+const API_PROD = `${API_BASE}/productos`
 let productos = []
 let items = []
 
 async function cargarProductos() {
-  const res = await fetch(API_PROD)
+  const res = await fetch(`${API_BASE}/productos/todos`)
   productos = await res.json()
 }
 
-function agregarItem() {
+window.agregarItem = function() {
   const idx = items.length
   items.push({ producto_id: "", cantidad: 1, precio_unitario: 0 })
   const cont = document.getElementById("items-pedido")
@@ -28,14 +29,14 @@ function agregarItem() {
   cont.appendChild(div)
 }
 
-function seleccionarProducto(idx, sel) {
+window.seleccionarProducto = function(idx, sel) {
   const opt = sel.options[sel.selectedIndex]
   items[idx].producto_id = sel.value
   items[idx].precio_unitario = parseFloat(opt.dataset.precio || 0)
   calcularTotal()
 }
 
-function quitarItem(idx) {
+window.quitarItem = function(idx) {
   document.getElementById(`item-${idx}`)?.remove()
   items[idx] = null
   calcularTotal()
@@ -49,7 +50,7 @@ function calcularTotal() {
   document.getElementById("total").textContent = `$${total.toLocaleString("es-CO")}`
 }
 
-async function crearPedido() {
+window.crearPedido = async function() {
   const nombre_cliente = document.getElementById("nombre_cliente").value.trim()
   const notas = document.getElementById("notas").value.trim()
   if (!nombre_cliente) return alert("El nombre del cliente es obligatorio")
