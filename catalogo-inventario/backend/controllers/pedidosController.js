@@ -26,7 +26,7 @@ export const obtenerPedidoPorId = async (req, res) => {
 }
 
 export const crearPedido = async (req, res) => {
-  const { nombre_cliente, correo_cliente, notas, total, items } = req.body
+  const { nombre_cliente, notas, total, items } = req.body
 
   if (!nombre_cliente) return res.status(400).json({ mensaje: 'El nombre del cliente es obligatorio' })
   if (!items || !items.length) return res.status(400).json({ mensaje: 'El pedido debe tener al menos un producto' })
@@ -34,9 +34,9 @@ export const crearPedido = async (req, res) => {
   const numero_pedido = 'PED-' + Date.now()
 
   const { rows: pedido } = await pool.query(`
-    INSERT INTO catalog.pedidos (numero_pedido, nombre_cliente, correo_cliente, notas, total)
-    VALUES ($1, $2, $3, $4, $5) RETURNING *
-  `, [numero_pedido, nombre_cliente, correo_cliente || null, notas, total]).catch(() => ({ rows: null }))
+    INSERT INTO catalog.pedidos (numero_pedido, nombre_cliente, notas, total)
+    VALUES ($1, $2, $3, $4) RETURNING *
+  `, [numero_pedido, nombre_cliente, notas || null, total]).catch(e => ({ rows: null, error: e }))
 
   if (!pedido) return res.status(400).json({ mensaje: 'Error al crear pedido' })
 
